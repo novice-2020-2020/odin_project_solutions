@@ -1,0 +1,1 @@
+initial solutions to basic ruby projects from the Odin Project
