@@ -1,1 +1,1 @@
-initial solutions to basic ruby projects from the Odin Project
+intial solutions to the odin project - ruby programming track
