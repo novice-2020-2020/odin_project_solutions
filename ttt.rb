@@ -19,7 +19,7 @@ def game()
     puts [" #{board[6]} " "|" " #{board[7]} " "|" " #{board[8]} "]
     end
 
-    # display_$board($board)
+
     $player_1_symbol = "O"
     $player_2_symbol = "X"
     
@@ -33,11 +33,10 @@ def game()
             return 2
         end
     end
-    # whos_turn($board)
 
 
     def player_input(board)
-        # puts $counter%2==0
+
         if $counter%2 == 0
             puts "please enter the number player 1"
         else
@@ -52,8 +51,7 @@ def game()
         end
         return inp
     end
-    # player_input_valid = player_input($board)
-    # player_input_valid.between?(0,8) && ($board[player_input_valid] == "-") == true
+
 
 
     def add_to_board(board, idx, turn, p1, p1_symbol, p2, p2_symbol)
