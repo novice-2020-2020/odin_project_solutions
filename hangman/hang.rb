@@ -1,4 +1,5 @@
 require 'json'
+
 class Hangman
   attr_reader :word, :alphabets, :correct_guesses, :incorrect_guesses, :counter, :guess, :saved_file
 
@@ -16,7 +17,16 @@ class Hangman
   end
 
   def words
-    ['xyz']
+    valid_words = []
+    file = File.open("a.txt","r")
+    while !file.eof?
+      line = file.readline
+      if line.size>=5 && line.size<=12
+      valid_words.push(line[0..line.size-3])
+      end
+    end
+    valid_words
+    # ['abc','xyz','def']
   end
 
 
@@ -25,12 +35,13 @@ class Hangman
     puts "the word is #{@word.size} letters long"
     while @counter > 0
     get_input
+    puts @guess
     if check_game
         puts "You won, congrats!"
         @counter = 0
         puts "the secret word was #{@word}"
     elsif @counter == 0 && check_game == false
-        puts "Sorry, you lost!"
+        puts "Sorry, you lost!, the word waas #{@word}"
       end
     end
     @saved_file[:word] = @word
@@ -82,10 +93,3 @@ end
 
 a = Hangman.new
 a.begin
-
-
-
-#improvements
-#1/ ask at every turn whether the player wants to continue or save and exit
-#2/ load a previously saved game
-#3/ load a list of valid words
