@@ -1,5 +1,4 @@
 require 'json'
-
 class Hangman
   attr_reader :word, :alphabets, :correct_guesses, :incorrect_guesses, :counter, :guess, :saved_file
 
@@ -36,23 +35,23 @@ class Hangman
     while @counter > 0
     get_input
     puts @guess
-    if check_game
-        puts "You won, congrats!"
-        @counter = 0
-        puts "the secret word was #{@word}"
-    elsif @counter == 0 && check_game == false
-        puts "Sorry, you lost!, the word waas #{@word}"
+    if @counter != 0 && check_game == false && save_game == true
+      p "player wants to save the game"
+      save
+    else
+      p "players no"
+      if check_game
+          puts "You won, congrats!"
+          @counter = 0
+          puts "the secret word was #{@word}"
+          save
+      elsif @counter == 0 && check_game == false
+          puts "Sorry, you lost!, the word waas #{@word}"
+          save
+        end
       end
+      
     end
-    @saved_file[:word] = @word
-    @saved_file[:counter] = @counter
-    @saved_file[:alphabets] = @alphabets
-    @saved_file[:correct] = @correct_guesses
-    @saved_file[:incorrect] = @incorrect_guesses
-    @saved_file[:guess] = @guess
-    puts "please enter the the name by which you want to save the file"
-  file_name = gets.chomp.to_s.concat('.json')
-  File.open(file_name,"wb"){ |file| file.puts JSON.pretty_generate(@saved_file) }
 
   end
 
@@ -79,11 +78,35 @@ class Hangman
 
   end
 
+  def save_game
+    puts "do you want to save the game - y/n"
+    ans = gets.chomp.to_s
+    if ans == 'y'
+      true
+    else
+      false
+    end
+  end
+
+  def save
+      p "please enter the name of the saved game"
+      name_file = gets.chomp.to_s.concat('.json')
+      @saved_file[:word] = @word
+      @saved_file[:counter] = @counter
+      @saved_file[:alphabets] = @alphabets
+      @saved_file[:correct] = @correct_guesses
+      @saved_file[:incorrect] = @incorrect_guesses
+      @saved_file[:guess] = @guess
+      File.open(name_file,"wb"){ |file| file.puts JSON.pretty_generate(@saved_file) }
+  end
+
+
   def find_index(str,inp)
     ar = []
     str.split('').each_with_index{|let, idx| ar.push(idx) if let == inp }
     ar
   end
+
   def check_game
     @guess == @word
   end
