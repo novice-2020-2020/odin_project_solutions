@@ -30,22 +30,43 @@ class Hangman
 
 
   def begin
-    puts "new game beginning"
-    puts "the word is #{@word.size} letters long"
-    while @counter > 0
-    get_input
-    puts @guess
-      if check_game
-          puts "You won, congrats!"
-          @counter = 0
-          puts "the secret word was #{@word}"
-          save
-      elsif @counter == 0 && check_game == false
-          puts "Sorry, you lost!, the word waas #{@word}"
-          save
+    if check_load
+      load
+      puts "the current status is #{@guess}"
+      puts "the correct guesses so far are #{@correct_guesses}"
+      puts "the incorrect guesses so far are #{@incorrect_guesses}"
+      puts "the counter is #{@counter}"
+      while @counter > 0
+      get_input
+      puts @guess
+      puts
+        if check_game
+            puts "You won, congrats!"
+            @counter = 0
+            puts "the secret word was #{@word}"
+            save
+        elsif @counter == 0 && check_game == false
+            puts "Sorry, you lost!, the word waas #{@word}"
+            save
+          end
+        end
+    else
+      puts "new game beginning"
+      puts "the word is #{@word.size} letters long"
+      while @counter > 0
+      get_input
+      puts @guess
+        if check_game
+            puts "You won, congrats!"
+            @counter = 0
+            puts "the secret word was #{@word}"
+            save
+        elsif @counter == 0 && check_game == false
+            puts "Sorry, you lost!, the word waas #{@word}"
+            save
+          end
         end
       end
-      
     end
 
 
@@ -105,8 +126,65 @@ class Hangman
     @guess == @word
   end
 
+  def check_load
+    p "do you want to load a previous file or play a new game"
+    inp = gets.chomp.to_s
+    if inp == 'y'
+      true
+    else
+      false
+  end
+end
+
+  def load
+    p "please enter the file you want to load"
+    p Dir.glob("*.json")
+    # Dir.each do {|f| puts f if f.include?(".json")}
+    file_chosen = gets.chomp.to_s.concat(".json")
+    file = File.open(file_chosen,'r')
+    file = JSON.load(file)
+    @word = file['word']
+    @counter = file['counter']
+    @alphabets = file['alphabets']
+    @correct_guesses = file['correct']
+    @incorrect_guesses = file['incorrect']
+    @guess = file['guess']
+  end   
+
 end
 
 
 a = Hangman.new
 a.begin
+
+
+# def check_load
+#     p "do you want to load a previous file or play a new game"
+#     inp = gets.chomp.to_s
+#     if inp == 'y'
+#       true
+#     else
+#       false
+#   end
+# end
+
+#   def load
+#     p "please enter the file you want to load"
+#     p Dir.glob("*.json")
+#     # Dir.each do {|f| puts f if f.include?(".json")}
+#     file_chosen = gets.chomp.to_s.concat(".json")
+#     file = File.open(file_chosen,'r')
+#     file = JSON.load(file)
+#     @word = file['word']
+#     @counter = file['counter']
+#     @alphabets = file['alphabets']
+#     @correct_guesses = file['correct']
+#     @incorrect_guesses = file['incorrect']
+#     @guess = file['guess']
+#   end  
+
+# if check_load
+#   load
+# else
+#   puts "nope"
+# end
