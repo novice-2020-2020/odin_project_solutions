@@ -16,20 +16,42 @@ class Hangman
   end
 
   def words
-    valid_words = []
-    file = File.open("a.txt","r")
-    while !file.eof?
-      line = file.readline
-      if line.size>=5 && line.size<=12
-      valid_words.push(line[0..line.size-3])
-      end
-    end
-    valid_words
-    # ['abc','xyz','def']
+    # valid_words = []
+    # file = File.open("a.txt","r")
+    # while !file.eof?
+    #   line = file.readline
+    #   if line.size>=5 && line.size<=12
+    #   valid_words.push(line[0..line.size-3])
+    #   end
+    # end
+    # valid_words
+    ['abc','xyz','def']
   end
 
 
   def begin
+    if check_load
+      load
+      puts "the word is #{@word.size} letters long"
+      puts "the current status is #{@guess}"
+      puts "the correct guesses so far are #{@correct_guesses}"
+      puts "the incorrect guesses so far are #{@incorrect_guesses}"
+      puts "you have #{@counter} chances left"
+      while @counter > 0
+      get_input
+      puts @guess
+      puts
+        if check_game
+            puts "You won, congrats!"
+            @counter = 0
+            puts "the secret word was #{@word}"
+            save
+        elsif @counter == 0 && check_game == false
+            puts "Sorry, you lost!, the word waas #{@word}"
+            save
+          end
+        end
+    else
     puts "new game beginning"
     puts "the word is #{@word.size} letters long"
     while @counter > 0
@@ -38,6 +60,7 @@ class Hangman
     if @counter != 0 && check_game == false && save_game == true
       p "player wants to save the game"
       save
+      @counter = 0
     else
       p "players no"
       if check_game
@@ -50,9 +73,8 @@ class Hangman
           save
         end
       end
-      
+      end
     end
-
   end
 
   def get_input
@@ -71,11 +93,8 @@ class Hangman
       @alphabets.delete(inp)
       @incorrect_guesses << inp
       puts "incorrect guess, you have #{@counter} chances left"
-      
     end
-  end
-
-
+    end
   end
 
   def save_game
@@ -89,16 +108,23 @@ class Hangman
   end
 
   def save
+    p "do you want to save the game"  
+    inp = gets.chomp.to_s
+    if inp == 'y'
+
       p "please enter the name of the saved game"
-      name_file = gets.chomp.to_s.concat('.json')
-      @saved_file[:word] = @word
-      @saved_file[:counter] = @counter
-      @saved_file[:alphabets] = @alphabets
-      @saved_file[:correct] = @correct_guesses
-      @saved_file[:incorrect] = @incorrect_guesses
-      @saved_file[:guess] = @guess
-      File.open(name_file,"wb"){ |file| file.puts JSON.pretty_generate(@saved_file) }
+        name_file = gets.chomp.to_s.concat('.json')
+        @saved_file[:word] = @word
+        @saved_file[:counter] = @counter
+        @saved_file[:alphabets] = @alphabets
+        @saved_file[:correct] = @correct_guesses
+        @saved_file[:incorrect] = @incorrect_guesses
+        @saved_file[:guess] = @guess
+        File.open(name_file,"wb"){ |file| file.puts JSON.pretty_generate(@saved_file) }
+    else
+      @counter = 0
   end
+end
 
 
   def find_index(str,inp)
@@ -111,7 +137,32 @@ class Hangman
     @guess == @word
   end
 
+  def check_load
+    p "do you want to load a previous file or play a new game"
+    inp = gets.chomp.to_s
+    if inp == 'y'
+      true
+    else
+      false
+  end
 end
+
+  def load
+    p "please enter the file you want to load"
+    p Dir.glob("*.json")
+    # Dir.each do {|f| puts f if f.include?(".json")}
+    file_chosen = gets.chomp.to_s.concat(".json")
+    file = File.open(file_chosen,'r')
+    file = JSON.load(file)
+    @word = file['word']
+    @counter = file['counter']
+    @alphabets = file['alphabets']
+    @correct_guesses = file['correct']
+    @incorrect_guesses = file['incorrect']
+    @guess = file['guess']
+  end  
+end
+
 
 
 a = Hangman.new
